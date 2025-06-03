@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Intelligence Hub - Enterprise Research Discovery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #173968 0%, #0d1f3a 50%, #0a1829 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .logo {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-interface {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            flex-grow: 1;
+        }
+
+        .query-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .query-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #173968;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .query-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .query-input:focus {
+            outline: none;
+            border-color: #173968;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(23, 57, 104, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .query-input::placeholder {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .output-types {
+            margin-bottom: 2.5rem;
+        }
+
+        .selection-summary {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .selection-summary.has-selections {
+            background: linear-gradient(135deg, #17396815, #be2e7808);
+            border-color: #173968;
+        }
+
+        .selection-title {
+            font-weight: 600;
+            color: #173968;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .selection-count {
+            background: #173968;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .selected-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 1.5rem;
+            align-items: center;
+        }
+
+        .selected-item {
+            background: #173968;
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .selected-item .remove-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: background 0.2s ease;
+        }
+
+        .selected-item .remove-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .no-selections {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #173968;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .output-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .output-option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .output-option:hover {
+            border-color: #173968;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(23, 57, 104, 0.2);
+        }
+
+        .output-option.selected {
+            border-color: #173968;
+            background: linear-gradient(135deg, #17396815, #be2e7808);
+            box-shadow: 0 4px 15px rgba(23, 57, 104, 0.25);
+        }
+
+        .output-option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .output-title {
+            font-weight: 600;
+            color: #173968;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .output-description {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .example-tag {
+            display: inline-block;
+            background: #173968;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .search-button {
+            width: 100%;
+            background: linear-gradient(135deg, #be2e78, #a02865);
+            color: white;
+            border: none;
+            padding: 1.25rem 2rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(190, 46, 120, 0.3);
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(190, 46, 120, 0.4);
+            background: linear-gradient(135deg, #d03487, #be2e78);
+        }
+
+        .search-button:active {
+            transform: translateY(0);
+        }
+
+        .search-button.loading {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        .search-button.loading .loading-spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e2e8f0;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-type {
+            display: inline-block;
+            background: #173968;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-content {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .main-interface {
+                padding: 2rem;
+            }
+            
+            .output-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <h1>Research Intelligence Hub</h1>
+                <p class="tagline">Enterprise Research Discovery Platform</p>
+                <p class="description">Unlock academic research insights for industrial innovation through AI-powered semantic search and executable scientific knowledge</p>
+            </div>
+        </div>
+
+        <div class="main-interface">
+            <div class="query-section">
+                <label class="query-label" for="research-query">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    Research Query
+                </label>
+                <textarea 
+                    id="research-query" 
+                    class="query-input" 
+                    placeholder="Ask your research question in natural language...
+
+Examples:
+• What breakthrough patents cite quantum computing research from 2020-2024?
+• Who are the leading industrial researchers in battery technology?
+• What validated experimental protocols exist for carbon capture methods?
+• Find executable datasets for machine learning in manufacturing?
+• How do AI advances connect to pharmaceutical drug discovery?"
+                ></textarea>
+            </div>
+
+            <div class="output-types">
+                <h3 class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    Output Types
+                </h3>
+                
+                <div class="selection-summary" id="selection-summary">
+                    <div class="selection-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Selected Output Types
+                        <span class="selection-count" id="selection-count">0</span>
+                    </div>
+                    <div class="selected-items" id="selected-items">
+                        <span class="no-selections">No output types selected. Please choose at least one option below.</span>
+                    </div>
+                </div>
+
+                <div class="output-grid">
+                    <!-- Output types will be dynamically generated from configuration -->
+                </div>
+            </div>
+
+            <button class="search-button" onclick="executeSearch()">
+                <div class="loading-spinner"></div>
+                <span class="button-text">Discover Research Intelligence</span>
+            </button>
+
+            <div class="results-section" id="results">
+                <h3 class="section-title">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Search Results
+                </h3>
+                <div id="results-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration settings
+        const CONFIG_SETTINGS = {
+            outputTypesUrl: './config/output-types.json', // Path to external JSON file
+            retryAttempts: 2,
+            retryDelay: 500 // milliseconds
+        };
+
+        // Embedded configuration for demo (minimal fallback)
+        const EMBEDDED_CONFIG = {
+            "claims": {
+                "title": "Scientific Claims with Proof",
+                "icon": "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+                "description": "Verified research findings with industrial validation, evidence trails, and implementation proof",
+                "tag": "Validated industrial claims",
+                "checked": true
+            },
+            "metadata": {
+                "version": "1.0.0",
+                "lastUpdated": "2025-06-03",
+                "description": "Research Intelligence Hub output types configuration - minimal fallback"
+            }
+        };
+
+        // Function to load configuration from external JSON file
+        async function loadOutputTypesConfig() {
+            // Always try to load from external file first
+            let attempts = 0;
+            
+            while (attempts < CONFIG_SETTINGS.retryAttempts) {
+                try {
+                    console.log(`Loading output types configuration from: ${CONFIG_SETTINGS.outputTypesUrl}`);
+                    
+                    const response = await fetch(CONFIG_SETTINGS.outputTypesUrl, {
+                        cache: 'no-cache',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const config = await response.json();
+                    console.log('✅ External configuration loaded successfully');
+                    return config;
+                    
+                } catch (error) {
+                    attempts++;
+                    console.error(`❌ Attempt ${attempts} failed to load external config:`, error.message);
+                    
+                    if (attempts < CONFIG_SETTINGS.retryAttempts) {
+                        console.log(`⏳ Retrying in ${CONFIG_SETTINGS.retryDelay}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, CONFIG_SETTINGS.retryDelay));
+                    }
+                }
+            }
+            
+            // If external file loading failed, use embedded config as fallback
+            console.log('⚠️ External file not found, using embedded configuration');
+            console.log('💡 To use external config, ensure ./config/output-types.json exists and is accessible');
+            return EMBEDDED_CONFIG;
+        }
+
+        // Function to handle checkbox change
+        function handleCheckboxChange(checkbox) {
+            console.log('handleCheckboxChange called for:', checkbox.id, 'checked:', checkbox.checked);
+            const option = checkbox.closest('.output-option');
+            
+            if (checkbox.checked) {
+                option.classList.add('selected');
+                console.log('Added selected class to:', checkbox.id);
+            } else {
+                option.classList.remove('selected');
+                console.log('Removed selected class from:', checkbox.id);
+            }
+            
+            updateSelectionSummary();
+        }
+
+        // Function to update selection summary
+        function updateSelectionSummary() {
+            const selectedCheckboxes = document.querySelectorAll('.output-option input[type="checkbox"]:checked');
+            const selectionSummary = document.getElementById('selection-summary');
+            const selectionCount = document.getElementById('selection-count');
+            const selectedItems = document.getElementById('selected-items');
+            
+            console.log('updateSelectionSummary: found', selectedCheckboxes.length, 'selected checkboxes');
+            
+            const count = selectedCheckboxes.length;
+            selectionCount.textContent = count;
+            
+            if (count > 0) {
+                selectionSummary.classList.add('has-selections');
+                selectedItems.innerHTML = '';
+                
+                selectedCheckboxes.forEach(checkbox => {
+                    const outputType = checkbox.closest('.output-option');
+                    const titleElement = outputType.querySelector('.output-title');
+                    // Get only the text, excluding the SVG
+                    const titleText = Array.from(titleElement.childNodes)
+                        .filter(node => node.nodeType === Node.TEXT_NODE)
+                        .map(node => node.textContent.trim())
+                        .join('');
+                    
+                    const selectedItem = document.createElement('div');
+                    selectedItem.className = 'selected-item';
+                    selectedItem.innerHTML = `
+                        ${titleText}
+                        <button class="remove-btn" data-checkbox-id="${checkbox.id}" title="Remove ${titleText}">×</button>
+                    `;
+                    selectedItems.appendChild(selectedItem);
+                });
+            } else {
+                selectionSummary.classList.remove('has-selections');
+                selectedItems.innerHTML = '<span class="no-selections">No output types selected. Please choose at least one option below.</span>';
+            }
+        }
+        function validateConfig(config) {
+            if (!config || typeof config !== 'object') {
+                console.error('❌ Configuration is not a valid object');
+                return false;
+            }
+
+            const requiredFields = ['title', 'icon', 'description', 'tag'];
+            
+            for (const [key, outputType] of Object.entries(config)) {
+                // Skip metadata object
+                if (key === 'metadata') continue;
+                
+                if (!outputType || typeof outputType !== 'object') {
+                    console.error(`❌ Output type '${key}' is not a valid object`);
+                    return false;
+                }
+                
+                for (const field of requiredFields) {
+                    if (!outputType[field]) {
+                        console.error(`❌ Missing required field '${field}' in output type '${key}'`);
+                        return false;
+                    }
+                }
+            }
+            
+            console.log('✅ Configuration validation passed');
+            return true;
+        }
+
+        // Function to show error state
+        function showConfigError(error) {
+            const outputGrid = document.querySelector('.output-grid');
+            outputGrid.innerHTML = `
+                <div style="text-align: center; padding: 3rem; border: 2px dashed #e53e3e; border-radius: 12px; background: #fef5f5;">
+                    <div style="color: #e53e3e; font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">
+                        ⚠️ Configuration Error
+                    </div>
+                    <div style="color: #c53030; margin-bottom: 1rem;">
+                        ${error.message}
+                    </div>
+                    <div style="color: #718096; font-size: 0.9rem;">
+                        Please ensure <code>./config/output-types.json</code> exists and is properly formatted.
+                    </div>
+                    <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #e53e3e; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        // Function to render output types from configuration
+        function renderOutputTypes(config) {
+            const outputGrid = document.querySelector('.output-grid');
+            
+            // Show loading state initially
+            outputGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: #64748b;">Loading output types...</div>';
+
+            // Validate configuration
+            if (!validateConfig(config)) {
+                showConfigError(new Error('Invalid configuration format. Please check the JSON file structure.'));
+                return;
+            }
+
+            // Clear loading state
+            outputGrid.innerHTML = '';
+
+            // Filter out metadata and render output types
+            const outputTypes = Object.entries(config).filter(([key]) => key !== 'metadata');
+
+            outputTypes.forEach(([key, outputType]) => {
+                const label = document.createElement('label');
+                label.className = 'output-option';
+                label.setAttribute('for', key);
+
+                label.innerHTML = `
+                    <input type="checkbox" id="${key}" value="${key}" ${outputType.checked ? 'checked' : ''}>
+                    <div class="output-title">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="${outputType.icon}"/>
+                        </svg>
+                        ${outputType.title}
+                    </div>
+                    <div class="output-description">
+                        ${outputType.description}
+                    </div>
+                    <span class="example-tag">${outputType.tag}</span>
+                `;
+
+                // Get the checkbox element
+                const checkbox = label.querySelector('input[type="checkbox"]');
+
+                // Add click event to the label (but not checkbox to avoid double-firing)
+                label.addEventListener('click', function(e) {
+                    console.log('Label clicked:', e.target.tagName, e.target.type);
+                    
+                    // Don't handle if clicking on checkbox directly or remove button
+                    if (e.target.type === 'checkbox' || e.target.classList.contains('remove-btn')) {
+                        console.log('Ignoring click on:', e.target.type || e.target.className);
+                        return;
+                    }
+                    
+                    // Prevent the event from bubbling to the checkbox
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Toggle the checkbox
+                    console.log('Toggling checkbox:', checkbox.id, 'from', checkbox.checked, 'to', !checkbox.checked);
+                    checkbox.checked = !checkbox.checked;
+                    handleCheckboxChange(checkbox);
+                });
+
+                // Add change event to checkbox for direct clicks ONLY
+                checkbox.addEventListener('change', function(e) {
+                    // Only handle this if the click was directly on the checkbox
+                    if (e.target === this) {
+                        console.log('Direct checkbox change event:', this.id, this.checked);
+                        handleCheckboxChange(this);
+                    }
+                });
+
+                // Initialize selected state
+                if (outputType.checked) {
+                    label.classList.add('selected');
+                }
+
+                outputGrid.appendChild(label);
+            });
+
+            console.log(`✅ Rendered ${outputTypes.length} output types`);
+            
+            // Update selection summary after rendering
+            updateSelectionSummary();
+        }
+
+        // Handle remove button clicks using event delegation
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-btn')) {
+                const checkboxId = e.target.getAttribute('data-checkbox-id');
+                const checkbox = document.getElementById(checkboxId);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    handleCheckboxChange(checkbox);
+                }
+            }
+        });
+
+        // Initialize the interface when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Initializing Research Intelligence Hub...');
+            
+            try {
+                // Load configuration from external JSON file (required)
+                const config = await loadOutputTypesConfig();
+                
+                // Render output types
+                renderOutputTypes(config);
+                
+            } catch (error) {
+                console.error('💥 Failed to initialize application:', error);
+                showConfigError(error);
+            }
+        });
+
+        // Handle search execution
+        async function executeSearch() {
+            const query = document.getElementById('research-query').value.trim();
+            const button = document.querySelector('.search-button');
+            const resultsSection = document.getElementById('results');
+            const resultsContainer = document.getElementById('results-container');
+
+            if (!query) {
+                alert('Please enter a research question.');
+                return;
+            }
+
+            // Get selected output types
+            const selectedTypes = Array.from(document.querySelectorAll('.output-option input:checked'))
+                .map(checkbox => checkbox.value);
+
+            if (selectedTypes.length === 0) {
+                alert('Please select at least one output type from the options above.');
+                return;
+            }
+
+            // Show loading state
+            button.classList.add('loading');
+            button.querySelector('.button-text').textContent = 'Processing Query...';
+
+            // Simulate API call (replace with actual Science Live Pipeline integration)
+            try {
+                await simulateSearch(query, selectedTypes);
+                
+                // Show results
+                resultsSection.classList.add('show');
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                alert('An error occurred while processing your query. Please try again.');
+            } finally {
+                // Reset button state
+                button.classList.remove('loading');
+                button.querySelector('.button-text').textContent = 'Search Scientific Knowledge';
+            }
+        }
+
+        // Simulate search results (replace with actual API integration)
+        async function simulateSearch(query, types) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const resultsContainer = document.getElementById('results-container');
+                    resultsContainer.innerHTML = '';
+
+                    // Generate mock results based on selected types
+                    types.forEach(type => {
+                        const results = generateMockResults(query, type);
+                        results.forEach(result => {
+                            const resultElement = createResultElement(result);
+                            resultsContainer.appendChild(resultElement);
+                        });
+                    });
+
+                    resolve();
+                }, 2000); // Simulate API delay
+            });
+        }
+
+        function generateMockResults(query, type) {
+            const mockData = {
+                citations: [
+                    {
+                        type: 'Citation Network',
+                        title: 'Papers citing "Attention Is All You Need"',
+                        content: 'Found 15,847 citations including breakthrough papers in computer vision, natural language processing, and protein folding prediction. Key citing papers include GPT-2, BERT, and AlphaFold 2.'
+                    }
+                ],
+                researchers: [
+                    {
+                        type: 'Expert Network',
+                        title: 'Key Researchers in Transformer Architecture',
+                        content: 'Primary authors: Ashish Vaswani (Google Brain), Noam Shazeer, Niki Parmar. Leading follow-up researchers: Alec Radford (OpenAI), Jacob Devlin (Google AI), with collaborative networks spanning 127 institutions.'
+                    }
+                ],
+                experimental: [
+                    {
+                        type: 'Experimental Data',
+                        title: 'Benchmark Performance Measurements',
+                        content: 'WMT 2014 English-German translation: 28.4 BLEU score. WMT 2014 English-French: 41.8 BLEU. Training time: 3.5 days on 8 P100 GPUs. Dataset: 4.5M sentence pairs.'
+                    }
+                ],
+                executable: [
+                    {
+                        type: 'Executable Nanopublication',
+                        title: 'Transformer Implementation with Reproducible Results',
+                        content: 'Docker container with complete training pipeline available. Includes pre-trained weights, tokenizer, and evaluation scripts. DOI: 10.5281/zenodo.1234567 - Click to execute in cloud environment.'
+                    }
+                ],
+                'cross-domain': [
+                    {
+                        type: 'Cross-Domain Connection',
+                        title: 'Transformer Applications Beyond NLP',
+                        content: 'Vision Transformer (ViT) for image classification, Protein Transformer for structure prediction, Time Series Transformer for forecasting. Cross-domain adoption in biology, chemistry, and physics.'
+                    }
+                ],
+                claims: [
+                    {
+                        type: 'Scientific Claim',
+                        title: 'Attention Mechanism Computational Efficiency',
+                        content: 'Claim: Self-attention reduces sequential computation compared to RNNs. Evidence: O(1) parallel operations vs O(n) sequential operations. Provenance: Section 3.1, empirical validation on GPU architectures.'
+                    }
+                ]
+            };
+
+            return mockData[type] || [];
+        }
+
+        function createResultElement(result) {
+            const div = document.createElement('div');
+            div.className = 'result-item';
+            div.innerHTML = `
+                <div class="result-type">${result.type}</div>
+                <div class="result-title">${result.title}</div>
+                <div class="result-content">${result.content}</div>
+            `;
+            return div;
+        }
+
+        // Handle Enter key in textarea
+        document.getElementById('research-query').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                executeSearch();
+            }
+        });
+    </script>
+</body>
+</html>
