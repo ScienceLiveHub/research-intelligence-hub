@@ -4,403 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Intelligence Hub - Enterprise Research Discovery</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #173968 0%, #0d1f3a 50%, #0a1829 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-        }
-
-        .logo {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .logo h1 {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .tagline {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-        }
-
-        .description {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .main-interface {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 3rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            flex-grow: 1;
-        }
-
-        .query-section {
-            margin-bottom: 2.5rem;
-        }
-
-        .query-label {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #173968;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .query-input {
-            width: 100%;
-            padding: 1.25rem 1.5rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #fafafa;
-            resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
-        }
-
-        .query-input:focus {
-            outline: none;
-            border-color: #173968;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(23, 57, 104, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .query-input::placeholder {
-            color: #a0aec0;
-            font-style: italic;
-        }
-
-        .output-types {
-            margin-bottom: 2.5rem;
-        }
-
-        .selection-summary {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .selection-summary.has-selections {
-            background: linear-gradient(135deg, #17396815, #be2e7808);
-            border-color: #173968;
-        }
-
-        .selection-title {
-            font-weight: 600;
-            color: #173968;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .selection-count {
-            background: #173968;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .selected-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            min-height: 1.5rem;
-            align-items: center;
-        }
-
-        .selected-item {
-            background: #173968;
-            color: white;
-            padding: 0.375rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .selected-item .remove-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            transition: background 0.2s ease;
-        }
-
-        .selected-item .remove-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .no-selections {
-            color: #64748b;
-            font-style: italic;
-            font-size: 0.9rem;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #173968;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .output-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .output-option {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 1.25rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .output-option:hover {
-            border-color: #173968;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(23, 57, 104, 0.2);
-        }
-
-        .output-option.selected {
-            border-color: #173968;
-            background: linear-gradient(135deg, #17396815, #be2e7808);
-            box-shadow: 0 4px 15px rgba(23, 57, 104, 0.25);
-        }
-
-        .output-option input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .output-title {
-            font-weight: 600;
-            color: #173968;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .output-description {
-            color: #64748b;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .example-tag {
-            display: inline-block;
-            background: #173968;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-top: 0.5rem;
-        }
-
-        .search-button {
-            width: 100%;
-            background: linear-gradient(135deg, #be2e78, #a02865);
-            color: white;
-            border: none;
-            padding: 1.25rem 2rem;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(190, 46, 120, 0.3);
-        }
-
-        .search-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(190, 46, 120, 0.4);
-            background: linear-gradient(135deg, #d03487, #be2e78);
-        }
-
-        .search-button:active {
-            transform: translateY(0);
-        }
-
-        .search-button.loading {
-            opacity: 0.8;
-            cursor: not-allowed;
-        }
-
-        .loading-spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-
-        .search-button.loading .loading-spinner {
-            display: inline-block;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .results-section {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 2px solid #e2e8f0;
-            display: none;
-        }
-
-        .results-section.show {
-            display: block;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-item {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .result-item:hover {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .result-type {
-            display: inline-block;
-            background: #173968;
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-        }
-
-        .result-title {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-        }
-
-        .result-content {
-            color: #4a5568;
-            line-height: 1.6;
-        }
-
-        .icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .main-interface {
-                padding: 2rem;
-            }
-            
-            .output-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <!-- Netlify Identity Widget -->
+    <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+     <!-- External Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -410,10 +17,19 @@
                 <p class="tagline">Enterprise Research Discovery Platform</p>
                 <p class="description">Unlock academic research insights for industrial innovation through AI-powered semantic search and executable scientific knowledge</p>
             </div>
+            
+            <!-- Login button using external CSS classes -->
+            <div class="login-section">
+                <button class="login-button" onclick="alert('Login button clicked!')">
+                    🔐 Sign in with GitHub
+                </button>
+            </div>
         </div>
 
         <div class="main-interface">
-            <div class="query-section">
+            <!-- Main Interface Content (protected by authentication) -->
+            <div class="auth-protected" id="protected-content">
+                <div class="query-section">
                 <label class="query-label" for="research-query">
                     <svg class="icon" viewBox="0 0 24 24">
                         <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
@@ -478,6 +94,232 @@ Examples:
     </div>
 
     <script>
+        // Authentication state
+        let currentUser = null;
+        let isAuthenticated = false;
+
+        // Initialize Netlify Identity
+        function initializeAuth() {
+            if (typeof netlifyIdentity !== 'undefined') {
+                console.log('🔐 Initializing Netlify Identity...');
+                
+                // Initialize the widget
+                netlifyIdentity.init();
+
+                // Check if user is already logged in
+                currentUser = netlifyIdentity.currentUser();
+                if (currentUser) {
+                    console.log('✅ User already authenticated:', currentUser.user_metadata?.full_name);
+                    isAuthenticated = true;
+                    updateAuthUI();
+                    loadInterface();
+                } else {
+                    console.log('❌ No authenticated user found');
+                    showAuthMessage();
+                }
+
+                // Listen for login events
+                netlifyIdentity.on('login', (user) => {
+                    console.log('✅ User logged in:', user.user_metadata?.full_name);
+                    currentUser = user;
+                    isAuthenticated = true;
+                    updateAuthUI();
+                    loadInterface();
+                    netlifyIdentity.close();
+                });
+
+                // Listen for logout events
+                netlifyIdentity.on('logout', () => {
+                    console.log('👋 User logged out');
+                    currentUser = null;
+                    isAuthenticated = false;
+                    updateAuthUI();
+                    showAuthMessage();
+                });
+
+            } else {
+                console.warn('⚠️ Netlify Identity not loaded, using fallback authentication');
+                // Fallback for development or direct GitHub OAuth
+                initializeFallbackAuth();
+            }
+        }
+
+        // Update authentication UI
+        function updateAuthUI() {
+            const authSection = document.getElementById('auth-section');
+            
+            if (isAuthenticated && currentUser) {
+                // Show user info and logout button
+                const avatar = currentUser.user_metadata?.avatar_url || 
+                             `https://github.com/${currentUser.user_metadata?.user_name}.png` ||
+                             'https://via.placeholder.com/32';
+                
+                const name = currentUser.user_metadata?.full_name || 
+                           currentUser.user_metadata?.user_name || 
+                           currentUser.email || 
+                           'User';
+
+                authSection.innerHTML = `
+                    <div class="user-info">
+                        <img src="${avatar}" alt="${name}" class="user-avatar" onerror="this.src='https://via.placeholder.com/32'">
+                        <span class="user-name">${name}</span>
+                        <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+                    </div>
+                `;
+            } else {
+                // Show login button
+                authSection.innerHTML = `
+                    <button class="auth-button" onclick="handleLogin()">
+                        <svg class="github-icon" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        Sign in with GitHub
+                    </button>
+                `;
+            }
+        }
+
+        // Handle login
+        function handleLogin() {
+            if (typeof netlifyIdentity !== 'undefined') {
+                console.log('🔐 Opening Netlify Identity login...');
+                netlifyIdentity.open();
+            } else {
+                console.log('🔐 Redirecting to GitHub OAuth...');
+                // Fallback: redirect to your GitHub OAuth endpoint
+                window.location.href = '/.netlify/functions/auth-github';
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            if (typeof netlifyIdentity !== 'undefined') {
+                console.log('👋 Logging out via Netlify Identity...');
+                netlifyIdentity.logout();
+            } else {
+                console.log('👋 Logging out...');
+                currentUser = null;
+                isAuthenticated = false;
+                updateAuthUI();
+                showAuthMessage();
+            }
+        }
+
+        // Show authentication message
+        function showAuthMessage() {
+            document.getElementById('auth-message').style.display = 'block';
+            document.getElementById('protected-content').classList.remove('authenticated');
+        }
+
+        // Load main interface
+        function loadInterface() {
+            document.getElementById('auth-message').style.display = 'none';
+            document.getElementById('protected-content').classList.add('authenticated');
+        }
+
+        // Fallback authentication for development
+        function initializeFallbackAuth() {
+            // Check for GitHub OAuth callback
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                console.log('🔐 Processing GitHub OAuth callback...');
+                // Process the OAuth code (you'd implement this)
+                processGitHubCallback(code);
+            } else {
+                // Check localStorage for existing session
+                const storedUser = localStorage.getItem('github_user');
+                if (storedUser) {
+                    try {
+                        currentUser = JSON.parse(storedUser);
+                        isAuthenticated = true;
+                        updateAuthUI();
+                        loadInterface();
+                    } catch (e) {
+                        localStorage.removeItem('github_user');
+                        showAuthMessage();
+                    }
+                } else {
+                    showAuthMessage();
+                }
+            }
+        }
+
+        // Process GitHub OAuth callback (fallback method)
+        async function processGitHubCallback(code) {
+            try {
+                const response = await fetch('/.netlify/functions/auth-github', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+
+                const userData = await response.json();
+                
+                if (userData.user) {
+                    currentUser = userData.user;
+                    isAuthenticated = true;
+                    localStorage.setItem('github_user', JSON.stringify(currentUser));
+                    updateAuthUI();
+                    loadInterface();
+                    
+                    // Clean up URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch (error) {
+                console.error('❌ GitHub OAuth error:', error);
+                showAuthMessage();
+            }
+        }
+
+        // Function to call app.js 
+        async function callAppJs(query, selectedTypes) {
+            console.log('🚀 Calling app.js...');
+            
+            try {
+                const response = await fetch('/.netlify/functions/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        outputTypes: selectedTypes,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('✅ Response from app.js:', result);
+                
+                displayResults(result);
+                return result;
+                
+            } catch (error) {
+                console.error('❌ Error calling app.js:', error);
+                throw error;
+            }
+        }
+
+        // Initialize everything when DOM loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Initializing Research Intelligence Hub...');
+            
+            // Load configuration 
+            try {
+                const config = await loadOutputTypesConfig();
+                renderOutputTypes(config);
+            } catch (error) {
+                console.error('💥 Failed to initialize application:', error);
+                showConfigError(error);
+            }
+        });
+
         // Configuration settings
         const CONFIG_SETTINGS = {
             outputTypesUrl: './config/output-types.json', // Path to external JSON file
@@ -629,19 +471,13 @@ Examples:
         function showConfigError(error) {
             const outputGrid = document.querySelector('.output-grid');
             outputGrid.innerHTML = `
-                <div style="text-align: center; padding: 3rem; border: 2px dashed #e53e3e; border-radius: 12px; background: #fef5f5;">
-                    <div style="color: #e53e3e; font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">
-                        ⚠️ Configuration Error
-                    </div>
-                    <div style="color: #c53030; margin-bottom: 1rem;">
-                        ${error.message}
-                    </div>
-                    <div style="color: #718096; font-size: 0.9rem;">
+                <div class="config-error">
+                    <div class="error-title">⚠️ Configuration Error</div>
+                    <div class="error-message">${error.message}</div>
+                    <div class="error-instruction">
                         Please ensure <code>./config/output-types.json</code> exists and is properly formatted.
                     </div>
-                    <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #e53e3e; color: white; border: none; border-radius: 6px; cursor: pointer;">
-                        Retry
-                    </button>
+                    <button class="retry-button" onclick="location.reload()">Retry</button>
                 </div>
             `;
         }
@@ -651,7 +487,7 @@ Examples:
             const outputGrid = document.querySelector('.output-grid');
             
             // Show loading state initially
-            outputGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: #64748b;">Loading output types...</div>';
+            outputGrid.innerHTML = '<div class="loading-message">Loading output types...</div>';
 
             // Validate configuration
             if (!validateConfig(config)) {
