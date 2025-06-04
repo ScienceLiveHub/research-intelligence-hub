@@ -37,7 +37,7 @@ exports.handler = async (event, context) => {
                 clientId: process.env.ORCID_CLIENT_ID,
                 baseUrl: process.env.ORCID_BASE_URL || 'https://sandbox.orcid.org',
                 scope: '/authenticate',
-                redirectUri: 'https://your-netlify-site.netlify.app/auth/orcid/callback' // Update this!
+                redirectUri: 'https://research-graph.netlify.app/auth/orcid/callback' // Update this!
             })
         };
     } catch (error) {
