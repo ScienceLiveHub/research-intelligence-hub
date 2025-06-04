@@ -229,18 +229,14 @@ function generateRandomString(length) {
 }
 
 /**
- * Update authentication UI to include ORCID
+ * Update authentication UI - ORCID only
  */
 function updateAuthUI() {
     const loginSection = document.querySelector('.login-section');
     
     if (isAuthenticated && currentUser) {
         // Show user info and logout button
-        const avatar = currentUser.user_metadata?.avatar_url || 
-                     (currentUser.provider === 'orcid' ? 
-                      `https://orcid.org/sites/default/files/images/orcid_16x16.png` :
-                      `https://github.com/${currentUser.user_metadata?.user_name}.png`) ||
-                     'https://via.placeholder.com/32';
+        const avatar = 'https://orcid.org/sites/default/files/images/orcid_16x16.png';
         
         const name = currentUser.user_metadata?.full_name || 
                    currentUser.name || 
@@ -248,15 +244,12 @@ function updateAuthUI() {
                    currentUser.orcid ||
                    'User';
 
-        const providerInfo = currentUser.provider === 'orcid' ? 
-            `<span class="provider-badge orcid">ORCID: ${currentUser.orcid}</span>` :
-
         loginSection.innerHTML = `
             <div class="user-info">
                 <img src="${avatar}" alt="${name}" class="user-avatar" onerror="this.src='https://via.placeholder.com/32'">
                 <div class="user-details">
                     <span class="user-name">${name}</span>
-                    ${providerInfo}
+                    <span class="provider-badge orcid">ORCID: ${currentUser.orcid}</span>
                 </div>
                 <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
             </div>
@@ -272,7 +265,6 @@ function updateAuthUI() {
         `;
     }
 }
-
 /**
  * Handle logout for both ORCID
  */
