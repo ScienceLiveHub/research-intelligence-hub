@@ -231,6 +231,9 @@ function generateRandomString(length) {
 /**
  * Update authentication UI - ORCID only
  */
+/**
+ * Update authentication UI - Fixed version
+ */
 function updateAuthUI() {
     const loginSection = document.querySelector('.login-section');
     
@@ -238,20 +241,26 @@ function updateAuthUI() {
         // Show user info and logout button
         const avatar = 'https://orcid.org/sites/default/files/images/orcid_16x16.png';
         
-        const name = currentUser.user_metadata?.full_name || 
-                   currentUser.name || 
-                   currentUser.email || 
-                   currentUser.orcid ||
-                   'User';
+        // Get user's display name (not ORCID ID)
+        const displayName = currentUser.user_metadata?.full_name || 
+                           currentUser.name || 
+                           currentUser.email || 
+                           'ORCID User';
+
+        // Show just the ORCID ID once, not the display name
+        const orcidDisplay = currentUser.orcid || 'Unknown';
 
         loginSection.innerHTML = `
             <div class="user-info">
-                <img src="${avatar}" alt="${name}" class="user-avatar" onerror="this.src='https://via.placeholder.com/32'">
+                <img src="${avatar}" alt="${displayName}" class="user-avatar" onerror="this.src='https://via.placeholder.com/32'">
                 <div class="user-details">
-                    <span class="user-name">${name}</span>
-                    <span class="provider-badge orcid">ORCID: ${currentUser.orcid}</span>
+                    <span class="user-name">${displayName}</span>
+                    <span class="provider-badge orcid">${orcidDisplay}</span>
                 </div>
-                <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+                <div class="user-actions">
+                    <button class="profile-btn" onclick="showUserProfile()">Profile</button>
+                    <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
+                </div>
             </div>
         `;
     } else {
@@ -264,6 +273,126 @@ function updateAuthUI() {
             </div>
         `;
     }
+}
+
+/**
+ * Show user profile modal/section
+ */
+function showUserProfile() {
+    // Create profile modal
+    const modal = document.createElement('div');
+    modal.className = 'profile-modal';
+    modal.id = 'profile-modal';
+    
+    const profileData = currentUser || {};
+    
+    modal.innerHTML = `
+        <div class="profile-content">
+            <div class="profile-header">
+                <h2>User Profile</h2>
+                <button class="close-btn" onclick="closeUserProfile()">×</button>
+            </div>
+            
+            <div class="profile-body">
+                <div class="profile-section">
+                    <h3>ORCID Information</h3>
+                    <div class="profile-field">
+                        <label>ORCID ID:</label>
+                        <span>${profileData.orcid || 'Not available'}</span>
+                    </div>
+                    <div class="profile-field">
+                        <label>Name:</label>
+                        <span>${profileData.name || 'Not available'}</span>
+                    </div>
+                    <div class="profile-field">
+                        <label>Email:</label>
+                        <span>${profileData.email || 'Not available'}</span>
+                    </div>
+                    <div class="profile-field">
+                        <label>Affiliation:</label>
+                        <span>${profileData.affiliation?.organization || 'Not available'}</span>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3>Additional Information</h3>
+                    <div class="profile-field">
+                        <label for="research-interests">Research Interests:</label>
+                        <textarea id="research-interests" placeholder="Enter your research interests...">${getStoredUserData('research-interests') || ''}</textarea>
+                    </div>
+                    <div class="profile-field">
+                        <label for="institution">Institution:</label>
+                        <input type="text" id="institution" placeholder="Your institution" value="${getStoredUserData('institution') || ''}">
+                    </div>
+                    <div class="profile-field">
+                        <label for="department">Department:</label>
+                        <input type="text" id="department" placeholder="Your department" value="${getStoredUserData('department') || ''}">
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="save-btn" onclick="saveUserProfile()">Save Profile</button>
+                    <button class="cancel-btn" onclick="closeUserProfile()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Show modal with animation
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+/**
+ * Close user profile modal
+ */
+function closeUserProfile() {
+    const modal = document.getElementById('profile-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
+/**
+ * Save user profile data
+ */
+function saveUserProfile() {
+    const researchInterests = document.getElementById('research-interests').value;
+    const institution = document.getElementById('institution').value;
+    const department = document.getElementById('department').value;
+    
+    // Store additional user data
+    const additionalData = {
+        'research-interests': researchInterests,
+        'institution': institution,
+        'department': department,
+        'last-updated': new Date().toISOString()
+    };
+    
+    // Store in localStorage (in production, you'd send this to your backend)
+    localStorage.setItem(`user-profile-${currentUser.orcid}`, JSON.stringify(additionalData));
+    
+    console.log('✅ User profile saved');
+    alert('Profile saved successfully!');
+    closeUserProfile();
+}
+
+/**
+ * Get stored user data
+ */
+function getStoredUserData(field) {
+    try {
+        const stored = localStorage.getItem(`user-profile-${currentUser.orcid}`);
+        if (stored) {
+            const data = JSON.parse(stored);
+            return data[field] || '';
+        }
+    } catch (error) {
+        console.warn('Failed to load stored user data:', error);
+    }
+    return '';
 }
 /**
  * Handle logout for both ORCID
