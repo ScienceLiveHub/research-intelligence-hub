@@ -511,6 +511,56 @@ async function saveUserProfile() {
     }
 }
 /**
+ * Load user profile data from server (Netlify Blobs)
+ */
+async function loadUserProfile() {
+    if (!currentUser?.orcid) {
+        console.warn('No ORCID ID available for loading profile');
+        return {};
+    }
+    
+    try {
+        console.log('📖 Loading profile from server...');
+        
+        const response = await fetch(`/.netlify/functions/load-profile?orcid=${encodeURIComponent(currentUser.orcid)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to load profile');
+        }
+        
+        if (result.found && result.profile) {
+            console.log('✅ Profile loaded from server');
+            
+            // Also save to localStorage for offline access
+            if (result.profile.additionalData) {
+                const localData = {
+                    ...result.profile.additionalData,
+                    'last-updated': result.profile.metadata?.lastUpdated || new Date().toISOString(),
+                    'loaded-from-server': true
+                };
+                localStorage.setItem(`user-profile-${currentUser.orcid}`, JSON.stringify(localData));
+            }
+            
+            return result.profile.additionalData || {};
+        } else {
+            console.log('📭 No server profile found, checking localStorage...');
+            return getStoredUserDataLocal();
+        }
+        
+    } catch (error) {
+        console.error('❌ Error loading profile from server:', error);
+        console.log('📱 Falling back to localStorage...');
+        return getStoredUserDataLocal();
+    }
+}
+
+/**
  * Get stored user data from localStorage (fallback)
  */
 function getStoredUserDataLocal() {
