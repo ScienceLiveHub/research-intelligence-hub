@@ -21,18 +21,6 @@ function loadInterface() {
 }
 
 /**
- * Placeholder for GitHub login
- */
-function handleLogin() {
-    if (typeof netlifyIdentity !== 'undefined') {
-        console.log('🔐 Opening Netlify Identity login...');
-        netlifyIdentity.open();
-    } else {
-        alert('GitHub login not implemented yet. Please use ORCID for now.');
-    }
-}
-
-/**
  * Initialize ORCID configuration from Netlify function
  */
 async function initOrcidConfig() {
@@ -262,7 +250,6 @@ function updateAuthUI() {
 
         const providerInfo = currentUser.provider === 'orcid' ? 
             `<span class="provider-badge orcid">ORCID: ${currentUser.orcid}</span>` :
-            '<span class="provider-badge github">GitHub</span>';
 
         loginSection.innerHTML = `
             <div class="user-info">
@@ -278,9 +265,6 @@ function updateAuthUI() {
         // Show login options
         loginSection.innerHTML = `
             <div class="auth-options">
-                <button class="login-button" onclick="handleLogin()">
-                    🔐 Sign in with GitHub
-                </button>
                 <button class="login-button orcid-button" onclick="handleOrcidLogin()">
                     🔬 Sign in with ORCID
                 </button>
@@ -290,7 +274,7 @@ function updateAuthUI() {
 }
 
 /**
- * Handle logout for both ORCID and GitHub
+ * Handle logout for both ORCID
  */
 function handleLogout() {
     if (currentUser?.provider === 'orcid') {
