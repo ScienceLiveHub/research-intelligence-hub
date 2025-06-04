@@ -27,7 +27,7 @@ body {
     position: relative;
     text-align: center;
     margin-bottom: 3rem;
-    padding: 2rem 0;
+    padding: 4rem 0 2rem 0;
 }
 
 .login-section {
@@ -340,9 +340,13 @@ body {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 20px;
-    padding: 2rem;
+    padding: 2.5rem; /* Slightly increased padding */
     margin-bottom: 2rem;
+    margin-top: 2rem; /* Add top margin to push it down */
     border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 800px; /* Limit width on larger screens */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .logo h1 {
