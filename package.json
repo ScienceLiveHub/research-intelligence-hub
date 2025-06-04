@@ -1,0 +1,21 @@
+{
+  "name": "research-intelligence-hub",
+  "version": "1.0.0",
+  "description": "Enterprise Research Discovery Platform",
+  "main": "index.js",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  },
+  "scripts": {
+    "build": "echo 'No build step required'",
+    "dev": "netlify dev"
+  },
+  "keywords": [
+    "research",
+    "orcid",
+    "academic",
+    "discovery"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}

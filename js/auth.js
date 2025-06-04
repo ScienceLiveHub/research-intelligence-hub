@@ -278,7 +278,10 @@ function updateAuthUI() {
 /**
  * Show user profile modal/section
  */
-function showUserProfile() {
+/**
+ * Show user profile modal with server data loading
+ */
+async function showUserProfile() {
     // Create profile modal
     const modal = document.createElement('div');
     modal.className = 'profile-modal';
@@ -286,64 +289,144 @@ function showUserProfile() {
     
     const profileData = currentUser || {};
     
+    // Show loading state first
     modal.innerHTML = `
         <div class="profile-content">
             <div class="profile-header">
                 <h2>User Profile</h2>
                 <button class="close-btn" onclick="closeUserProfile()">×</button>
             </div>
-            
             <div class="profile-body">
-                <div class="profile-section">
-                    <h3>ORCID Information</h3>
-                    <div class="profile-field">
-                        <label>ORCID ID:</label>
-                        <span>${profileData.orcid || 'Not available'}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Name:</label>
-                        <span>${profileData.name || 'Not available'}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Email:</label>
-                        <span>${profileData.email || 'Not available'}</span>
-                    </div>
-                    <div class="profile-field">
-                        <label>Affiliation:</label>
-                        <span>${profileData.affiliation?.organization || 'Not available'}</span>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <h3>Additional Information</h3>
-                    <div class="profile-field">
-                        <label for="research-interests">Research Interests:</label>
-                        <textarea id="research-interests" placeholder="Enter your research interests...">${getStoredUserData('research-interests') || ''}</textarea>
-                    </div>
-                    <div class="profile-field">
-                        <label for="institution">Institution:</label>
-                        <input type="text" id="institution" placeholder="Your institution" value="${getStoredUserData('institution') || ''}">
-                    </div>
-                    <div class="profile-field">
-                        <label for="department">Department:</label>
-                        <input type="text" id="department" placeholder="Your department" value="${getStoredUserData('department') || ''}">
-                    </div>
-                </div>
-                
-                <div class="profile-actions">
-                    <button class="save-btn" onclick="saveUserProfile()">Save Profile</button>
-                    <button class="cancel-btn" onclick="closeUserProfile()">Cancel</button>
+                <div style="text-align: center; padding: 3rem; color: #64748b;">
+                    <div style="margin-bottom: 1rem;">📡</div>
+                    <div>Loading profile data...</div>
                 </div>
             </div>
         </div>
     `;
     
     document.body.appendChild(modal);
-    
-    // Show modal with animation
     setTimeout(() => modal.classList.add('show'), 10);
+    
+    // Load profile data from server
+    try {
+        const serverProfileData = await loadUserProfile();
+        
+        // Update modal with loaded data
+        modal.innerHTML = `
+            <div class="profile-content">
+                <div class="profile-header">
+                    <h2>User Profile</h2>
+                    <button class="close-btn" onclick="closeUserProfile()">×</button>
+                </div>
+                
+                <div class="profile-body">
+                    <div class="profile-section">
+                        <h3>ORCID Information</h3>
+                        <div class="profile-field">
+                            <label>ORCID ID:</label>
+                            <span>${profileData.orcid || 'Not available'}</span>
+                        </div>
+                        <div class="profile-field">
+                            <label>Name:</label>
+                            <span>${profileData.name || 'Not available'}</span>
+                        </div>
+                        <div class="profile-field">
+                            <label>Email:</label>
+                            <span>${profileData.email || 'Not available'}</span>
+                        </div>
+                        <div class="profile-field">
+                            <label>Affiliation:</label>
+                            <span>${profileData.affiliation?.organization || 'Not available'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>Additional Information</h3>
+                        <div class="profile-field">
+                            <label for="research-interests">Research Interests:</label>
+                            <textarea id="research-interests" placeholder="Enter your research interests...">${serverProfileData['research-interests'] || ''}</textarea>
+                        </div>
+                        <div class="profile-field">
+                            <label for="institution">Institution:</label>
+                            <input type="text" id="institution" placeholder="Your institution" value="${serverProfileData['institution'] || ''}">
+                        </div>
+                        <div class="profile-field">
+                            <label for="department">Department:</label>
+                            <input type="text" id="department" placeholder="Your department" value="${serverProfileData['department'] || ''}">
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="save-btn" onclick="saveUserProfile()">Save Profile</button>
+                        <button class="cancel-btn" onclick="closeUserProfile()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error loading profile data:', error);
+        
+        // If loading fails, show form with localStorage data as fallback
+        const localData = getStoredUserDataLocal();
+        
+        modal.innerHTML = `
+            <div class="profile-content">
+                <div class="profile-header">
+                    <h2>User Profile</h2>
+                    <button class="close-btn" onclick="closeUserProfile()">×</button>
+                </div>
+                <div class="profile-body">
+                    <div style="text-align: center; padding: 1rem; color: #e53e3e; background: #fef5f5; border-radius: 8px; margin-bottom: 1rem;">
+                        ⚠️ Could not load profile from server. Using local data.
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>ORCID Information</h3>
+                        <div class="profile-field">
+                            <label>ORCID ID:</label>
+                            <span>${profileData.orcid || 'Not available'}</span>
+                        </div>
+                        <div class="profile-field">
+                            <label>Name:</label>
+                            <span>${profileData.name || 'Not available'}</span>
+                        </div>
+                        <div class="profile-field">
+                            <label>Email:</label>
+                            <span>${profileData.email || 'Not available'}</span>
+                        </div>
+                        <div class="profile-field">
+                            <label>Affiliation:</label>
+                            <span>${profileData.affiliation?.organization || 'Not available'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>Additional Information</h3>
+                        <div class="profile-field">
+                            <label for="research-interests">Research Interests:</label>
+                            <textarea id="research-interests" placeholder="Enter your research interests...">${localData['research-interests'] || ''}</textarea>
+                        </div>
+                        <div class="profile-field">
+                            <label for="institution">Institution:</label>
+                            <input type="text" id="institution" placeholder="Your institution" value="${localData['institution'] || ''}">
+                        </div>
+                        <div class="profile-field">
+                            <label for="department">Department:</label>
+                            <input type="text" id="department" placeholder="Your department" value="${localData['department'] || ''}">
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="save-btn" onclick="saveUserProfile()">Save Profile</button>
+                        <button class="cancel-btn" onclick="closeUserProfile()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 }
-
 /**
  * Close user profile modal
  */
@@ -358,41 +441,104 @@ function closeUserProfile() {
 /**
  * Save user profile data
  */
-function saveUserProfile() {
+async function saveUserProfile() {
     const researchInterests = document.getElementById('research-interests').value;
     const institution = document.getElementById('institution').value;
     const department = document.getElementById('department').value;
     
-    // Store additional user data
-    const additionalData = {
-        'research-interests': researchInterests,
-        'institution': institution,
-        'department': department,
-        'last-updated': new Date().toISOString()
-    };
+    // Show loading state
+    const saveBtn = document.querySelector('.save-btn');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
     
-    // Store in localStorage (in production, you'd send this to your backend)
-    localStorage.setItem(`user-profile-${currentUser.orcid}`, JSON.stringify(additionalData));
-    
-    console.log('✅ User profile saved');
-    alert('Profile saved successfully!');
-    closeUserProfile();
+    try {
+        // Prepare profile data
+        const profileData = {
+            'research-interests': researchInterests,
+            'institution': institution,
+            'department': department
+        };
+        
+        // Send to server
+        const response = await fetch('/.netlify/functions/save-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orcidId: currentUser.orcid,
+                profileData: profileData,
+                userInfo: {
+                    name: currentUser.name,
+                    email: currentUser.email,
+                    affiliation: currentUser.affiliation
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to save profile');
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to save profile');
+        }
+        
+        console.log('✅ Profile saved to server');
+        
+        // Also save to localStorage as backup
+        const localData = {
+            ...profileData,
+            'last-updated': new Date().toISOString(),
+            'saved-to-server': true
+        };
+        localStorage.setItem(`user-profile-${currentUser.orcid}`, JSON.stringify(localData));
+        
+        alert('Profile saved successfully!');
+        closeUserProfile();
+        
+    } catch (error) {
+        console.error('❌ Error saving profile:', error);
+        alert(`Error saving profile: ${error.message}`);
+    } finally {
+        // Reset button state
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+    }
 }
-
 /**
- * Get stored user data
+ * Get stored user data from localStorage (fallback)
  */
-function getStoredUserData(field) {
+function getStoredUserDataLocal() {
     try {
         const stored = localStorage.getItem(`user-profile-${currentUser.orcid}`);
         if (stored) {
             const data = JSON.parse(stored);
-            return data[field] || '';
+            console.log('📱 Profile loaded from localStorage');
+            return data;
         }
     } catch (error) {
         console.warn('Failed to load stored user data:', error);
     }
-    return '';
+    return {};
+}
+
+/**
+ * Get stored user data field (updated to use server)
+ */
+async function getStoredUserData(field) {
+    // If we're in the profile modal, load fresh data from server
+    if (document.getElementById('profile-modal')) {
+        const profileData = await loadUserProfile();
+        return profileData[field] || '';
+    }
+    
+    // Otherwise use cached localStorage data
+    return getStoredUserDataLocal()[field] || '';
 }
 /**
  * Handle logout for both ORCID
