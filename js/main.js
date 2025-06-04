@@ -244,18 +244,6 @@ function renderOutputTypes(config) {
     updateSelectionSummary();
 }
 
-// Handle remove button clicks using event delegation
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-btn')) {
-        const checkboxId = e.target.getAttribute('data-checkbox-id');
-        const checkbox = document.getElementById(checkboxId);
-        if (checkbox) {
-            checkbox.checked = false;
-            handleCheckboxChange(checkbox);
-        }
-    }
-});
-
 // Handle search execution
 async function executeSearch() {
     const query = document.getElementById('research-query').value.trim();
@@ -395,28 +383,51 @@ function createResultElement(result) {
     return div;
 }
 
-// Initialize everything when DOM loads
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Initializing Research Intelligence Hub...');
-    
-    // Load configuration 
-    try {
-        const config = await loadOutputTypesConfig();
-        renderOutputTypes(config);
-    } catch (error) {
-        console.error('💥 Failed to initialize application:', error);
-        showConfigError(error);
+// Handle remove button clicks using event delegation
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-btn')) {
+        const checkboxId = e.target.getAttribute('data-checkbox-id');
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+            checkbox.checked = false;
+            handleCheckboxChange(checkbox);
+        }
     }
 });
 
-// Handle Enter key in textarea - needs to be added after DOM loads
-document.addEventListener('DOMContentLoaded', function() {
-    const queryInput = document.getElementById('research-query');
-    if (queryInput) {
-        queryInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                executeSearch();
+// Initialize everything when DOM loads - SINGLE EVENT LISTENER
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 Initializing Research Intelligence Hub...');
+    
+    try {
+        // Initialize ORCID configuration first
+        await initOrcidConfig();
+        
+        // Check for OAuth callback first
+        if (!checkOrcidCallback()) {
+            // Check for existing sessions
+            if (!checkExistingOrcidSession()) {
+                // Show login options
+                updateAuthUI();
             }
-        });
+        }
+        
+        // Load configuration 
+        const config = await loadOutputTypesConfig();
+        renderOutputTypes(config);
+        
+        // Add keyboard handler for textarea
+        const queryInput = document.getElementById('research-query');
+        if (queryInput) {
+            queryInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    executeSearch();
+                }
+            });
+        }
+        
+    } catch (error) {
+        console.error('💥 Failed to initialize application:', error);
+        showConfigError(error);
     }
 });

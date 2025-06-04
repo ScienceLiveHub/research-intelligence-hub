@@ -1,7 +1,36 @@
-// Add these functions to your existing index.html script section
-
-// ORCID Configuration
+// ORCID Configuration and Authentication
+// Authentication state variables
+let currentUser = null;
+let isAuthenticated = false;
 let ORCID_CONFIG;
+
+/**
+ * Functions that may be called but not defined elsewhere
+ */
+function showAuthMessage() {
+    // For now, just show login options
+    updateAuthUI();
+}
+
+function loadInterface() {
+    // Hide any auth messages and show the main interface
+    const protectedContent = document.getElementById('protected-content');
+    if (protectedContent) {
+        protectedContent.style.display = 'block';
+    }
+}
+
+/**
+ * Placeholder for GitHub login
+ */
+function handleLogin() {
+    if (typeof netlifyIdentity !== 'undefined') {
+        console.log('🔐 Opening Netlify Identity login...');
+        netlifyIdentity.open();
+    } else {
+        alert('GitHub login not implemented yet. Please use ORCID for now.');
+    }
+}
 
 /**
  * Initialize ORCID configuration from Netlify function
@@ -212,7 +241,7 @@ function generateRandomString(length) {
 }
 
 /**
- * Update your existing updateAuthUI function to include ORCID
+ * Update authentication UI to include ORCID
  */
 function updateAuthUI() {
     const loginSection = document.querySelector('.login-section');
@@ -261,7 +290,7 @@ function updateAuthUI() {
 }
 
 /**
- * Update your existing handleLogout function to handle ORCID
+ * Handle logout for both ORCID and GitHub
  */
 function handleLogout() {
     if (currentUser?.provider === 'orcid') {
@@ -281,32 +310,3 @@ function handleLogout() {
     updateAuthUI();
     showAuthMessage();
 }
-
-/**
- * Update your existing DOMContentLoaded event
- */
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 Initializing Research Intelligence Hub...');
-    
-    try {
-        // Initialize ORCID configuration
-        await initOrcidConfig();
-        
-        // Check for OAuth callback first
-        if (!checkOrcidCallback()) {
-            // Check for existing sessions
-            if (!checkExistingOrcidSession()) {
-                // Initialize Netlify Identity as fallback
-                initializeAuth();
-            }
-        }
-        
-        // Load output types configuration
-        const config = await loadOutputTypesConfig();
-        renderOutputTypes(config);
-        
-    } catch (error) {
-        console.error('💥 Failed to initialize application:', error);
-        showConfigError(error);
-    }
-});
