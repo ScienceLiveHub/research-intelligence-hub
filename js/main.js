@@ -1,7 +1,7 @@
 // Research Intelligence Hub - Main JavaScript
 // Configuration settings
 const CONFIG_SETTINGS = {
-    outputTypesUrl: '../config/output-types.json', // Path to external JSON file
+    outputTypesUrl: './config/output-types.json', // Path to external JSON file
     retryAttempts: 2,
     retryDelay: 500 // milliseconds
 };
@@ -59,7 +59,7 @@ async function loadOutputTypesConfig() {
     
     // If external file loading failed, use embedded config as fallback
     console.log('⚠️ External file not found, using embedded configuration');
-    console.log('💡 To use external config, ensure ../config/output-types.json exists and is accessible');
+    console.log('💡 To use external config, ensure ./config/output-types.json exists and is accessible');
     return EMBEDDED_CONFIG;
 }
 
@@ -156,7 +156,7 @@ function showConfigError(error) {
             <div class="error-title">⚠️ Configuration Error</div>
             <div class="error-message">${error.message}</div>
             <div class="error-instruction">
-                Please ensure <code>../config/output-types.json</code> exists and is properly formatted.
+                Please ensure <code>./config/output-types.json</code> exists and is properly formatted.
             </div>
             <button class="retry-button" onclick="location.reload()">Retry</button>
         </div>
